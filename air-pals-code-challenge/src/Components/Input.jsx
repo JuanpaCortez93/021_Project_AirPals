@@ -1,86 +1,43 @@
 //IMPORT LIBRARIES
-import { useState, useEffect } from "react";
-import axios from 'axios';
+import { useContext } from "react";
+import Modal from "./Modal.jsx"
+
+import { InputContext } from "../Context/InputContext";
+import { FaMapMarkerAlt, FaMapMarker } from "react-icons/fa"
 
 const Input = () => {
-
-    //USE STATE INITIALIZATION
-    const [addressTextInput, setAddressTextInput] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
-
-    //USE EFFECT INITIALIZATION
-    useEffect(() => {
-        const fetchSuggestions = async () => {
-          try {
-            const addressUrl = `http://localhost:3000/getAddressByName`;
-            const response = await axios.post(addressUrl, {addressTextInput});
-            console.log(response.data);
-            setSuggestions(response.data);
-          } catch (error) {
-            console.error('Error fetching suggestions:', error);
-          }
-    };
-
-    if (addressTextInput.trim() !== '') {
-        fetchSuggestions();
-      } else {
-        setSuggestions([]);
-      }
-    }, [addressTextInput]);
-
-    //INPUT'S ON CHANGE ACTION-FUNCTION
-    const handleInputChange = (e) => {
-        setAddressTextInput(e.target.value);
-    };
-
-    //CHECK IF ADDRESS IS PART OF THE ZIP CODES
-    const handleSuggestionClick = async (placeIdAddress) => {
-        const addressUrl = `http://localhost:3000/getZipCodeByPlaceId`;
-        const response = await axios.post(addressUrl, {placeIdAddress});
-        console.log(response.data)
-    };
+    
+    const {addressTextInput, suggestions, handleInputChange, handleSuggestionClick} = useContext(InputContext);
 
     return (
         <>
-            <div>
-                <input type="text" role="text" value={addressTextInput} placeholder="Enter an address here..." onChange={handleInputChange}></input>
+            <div className="max-w-screen-md">
+                <div className="flex justify-center items-center">
+                    <div className="bg-white p-4">
+                        <FaMapMarkerAlt className="w-9 h-9"></FaMapMarkerAlt>
+                    </div>
+                    <input type="text" role="text" value={addressTextInput} placeholder="Enter an address here..." onChange={handleInputChange} 
+                    className="w-full px-2 py-5 border-gray-300 text-xl text-start font-semibold focus:outline-none focus:border-blue-500"></input>
+                </div>
                 
-                <ul>
-                    {suggestions.map((suggestion) => (
-                    <li key={suggestion.place_id} onClick={() => handleSuggestionClick(suggestion.place_id)}>
-                        {suggestion.description} - {suggestion.place_id}
-                    </li>
+                <ul className="bg-white">
+                        {suggestions.map((suggestion) => (
+                        <li key={suggestion.place_id} className="flex justify-start items-center py-3 text-start list-none cursor-default" onClick={() => handleSuggestionClick(suggestion.place_id)}>
+                            <div>
+                                <FaMapMarker className="w-6 h-6 mx-5"></FaMapMarker>
+                            </div>
+                            <div>
+                                <p>{suggestion.description}</p>
+                                <p>{suggestion.structured_formatting.secondary_text}</p>
+                            </div>
+                        </li>
                     ))}
                 </ul>
             </div>
 
+            <Modal />
         </>
     )
 }
 
 export default Input;
-
-
-
-// import React, { useState } from 'react';
-
-// const AddressAutocomplete = () => {
-//   const [inputValue, setInputValue] = useState('');
-//   const [suggestions, setSuggestions] = useState([]);
-
-
-
-//   return (
-//     <div>
-//       <input
-//         type="text"
-//         value={inputValue}
-//         onChange={handleInputChange}
-//         placeholder="Ingrese una dirección"
-//       />
-//       {/* Lista de sugerencias aquí */}
-//     </div>
-//   );
-// };
-
-// export default AddressAutocomplete;

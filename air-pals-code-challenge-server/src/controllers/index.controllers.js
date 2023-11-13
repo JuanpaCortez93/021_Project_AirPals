@@ -1,33 +1,54 @@
+//IMPORT DB CONNECTION POOL AND AXIOS INSTANCE
+import connection from "../database/dbConnection.js";
 import instance from "./api-instance.js";
-const API_KEY = "AIzaSyC7V4A5k_CUlnlZS9u5EN6TC3mm1JLZQE0";
 
-export const GetAddress = async (req, res) => {
+//IMPORT VENV VARIABLES
+import { GOOGLE_MAPS_API } from "../config.js";
 
-    const {addressTextInput} = req.body;
-    const addressResponse = await instance.get(`/json?input=${addressTextInput}&key=${API_KEY}`, {});
-    res.send(addressResponse.data.predictions);
-    
-}
+//GET ADDRESS SUGGESTIONS - COMMING FROM LINE 17 Input.jsx
+export const GetAddressSuggestions = async (req, res) => {
 
-export const GetZipCode = async (req, res) => {
-
-    const {placeIdAddress} = req.body;
-    const urlPath = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeIdAddress}&key=${API_KEY}`
-    const idAddressResponse = await instance.get(urlPath);
-
-    if (idAddressResponse.data && idAddressResponse.data.result && idAddressResponse.data.result.address_components){
-        const addressComponents = idAddressResponse.data.result.address_components;
-
-        // Encontrar el componente que contiene el código postal
-        const zipcodeComponent = addressComponents.find((component) => component.types.includes('postal_code'));
-
-        // Obtener el código postal
-        const zipcode = zipcodeComponent ? zipcodeComponent.short_name : '';
-
-        console.log(zipcode);
+    try{
+        const {addressTextInput} = req.body;
+        const addressResponse = await instance.get(`/autocomplete/json?input=${addressTextInput}&key=${GOOGLE_MAPS_API}`);
+        res.status(200).send(addressResponse.data.predictions);
+    }catch(error){
+        res.status(500).send([]);
     }
 
-    res.send(idAddressResponse.data);
-    
+}
+
+//GET ADDRESS SUGGESTIONS - COMMING FROM LINE 38 Input.jsx
+export const GetZipCode = async (req, res) => {
+
+    try{
+        const {placeIdAddress} = req.body;
+        const urlPath = `/details/json?place_id=${placeIdAddress}&key=${GOOGLE_MAPS_API}`
+        const idAddressResponse = await instance.get(urlPath);
+
+        if (idAddressResponse.data && idAddressResponse.data.result && idAddressResponse.data.result.address_components){
+            const addressComponents = idAddressResponse.data.result.address_components;
+            const zipcodeComponent = addressComponents.find((component) => component.types.includes('postal_code'));
+            const zipcode = zipcodeComponent ? zipcodeComponent.short_name : 0;
+            let isZipCode = false;
+
+            if(zipcode !== 0){
+                
+                const [rows] = await connection.query('SELECT * FROM ZipCodes WHERE zipcode = ?', [zipcode]);
+
+                if(rows.length > 0) {
+                    isZipCode = true;
+                }
+            
+            }
+
+            res.status(200).send({isZipCode});
+        }
+
+    }catch(error){
+
+        res.status(500).send({isZipCode: false});
+
+    }   
     
 }

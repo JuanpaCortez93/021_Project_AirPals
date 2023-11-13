@@ -1,11 +1,11 @@
 // APP COMPONENT - MAIN COMPONENT
 // IMPORT ANOTHER COMPONENTS
-import Input from "./Input.jsx"
+import Card from "./Card.jsx"
 
 const App = () => {
   return(
     <>
-      <Input></Input>
+      <Card></Card>
     </>
   )
 }
