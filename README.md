@@ -10,7 +10,7 @@ This project is a Code Challenge created by AirPals. The acceptance criteria is 
 4. Otherwise, if it is not a valid postal code or ZIP code, a popup will display a message saying that it is out of range.
 
 # Acceptance criteria:
-- Clean, consistent, and understandable code: All folders have been organized in both the front end and back end in the most professional manner possible. Concepts of KISS (Keep It Simple, Stupid) and DRY (Don't Repeat Yourself) have been applied, attempting to minimize technical debt. As of the creation date of this documentation (11/13/2023), all libraries are free of vulnerabilities. Additionally, emphasis is placed on simple and clear commenting. The libraries used include:
+- Clean, consistent, and understandable code: All folders have been organized in both the front end and back end in the most professional manner possible. Concepts of KISS (Keep It Simple, Stupid) and DRY (Don't Repeat Yourself) have been applied, attempting to minimize technical debt, also using env variables. As of the creation date of this documentation (11/13/2023), all libraries are free of vulnerabilities. Additionally, emphasis is placed on simple and clear commenting. The libraries used include:
 
  * Frontend: vite (react) y axios.
  * Backend: express, nodemon, cors, dotenv, mysql2, axios, jest y supertest. A relational table was chosen in this case to store the provided ZIP codes as it is deemed most suitable based on my technical criteria for this type of information.  
